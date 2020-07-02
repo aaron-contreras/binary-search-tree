@@ -2,7 +2,6 @@
 
 require_relative './merge_sort.rb'
 require_relative './node.rb'
-require 'pry'
 # Represents a Binary Search Tree
 class Tree
   include MergeSort
@@ -22,6 +21,20 @@ class Tree
     root.right_child = build_tree array[(midpoint + 1)..-1]
 
     root
+  end
+
+  def insert(value, root = @root)
+    if value < root.value
+      return root.left_child = Node.new(value) if root.left_child.nil?
+
+      insert value, root.left_child
+    elsif value > root.value
+      return root.right_child = Node.new(value) if root.right_child.nil?
+
+      insert value, root.right_child
+    else
+      puts "Can't insert duplicate values"
+    end
   end
 
   def pretty_print(node = root, prefix = '', is_left = true)
