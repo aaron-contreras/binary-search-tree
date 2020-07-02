@@ -45,8 +45,6 @@ class Tree
     node.left_child.nil? && node.right_child || node.left_child && node.right_child.nil?
   end
 
-  require 'pry'
-
   def delete(value, root = @root)
     if root.value == value
       if one_child?(root)
@@ -59,7 +57,7 @@ class Tree
         root.value = second_smallest_in_subtree.left_child.value
         second_smallest_in_subtree.left_child = second_smallest_in_subtree.left_child.right_child
       end
-    
+
     elsif root.left_child && root.left_child.value == value
       if leaf?(root.left_child)
         root.left_child = nil
@@ -93,6 +91,17 @@ class Tree
       else
         delete value, root.right_child
       end
+    end
+  end
+
+  def find(value, node = root)
+    return if node.nil?
+    return node if node.value == value
+
+    if value < node.value
+      find value, node.left_child
+    else
+      find value, node.right_child
     end
   end
 
