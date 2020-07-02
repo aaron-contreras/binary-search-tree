@@ -32,8 +32,67 @@ class Tree
       return root.right_child = Node.new(value) if root.right_child.nil?
 
       insert value, root.right_child
+    end
+
+    # duplicate values are not allowed
+  end
+
+  def leaf?(node)
+    node.left_child.nil? && node.right_child.nil?
+  end
+
+  def one_child?(node)
+    node.left_child.nil? && node.right_child || node.left_child && node.right_child.nil?
+  end
+
+  require 'pry'
+
+  def delete(value, root = @root)
+    if root.value == value
+      if one_child?(root)
+        @root = root.left_child || root.right_child
+      else
+        next_biggest = root.right_child
+        second_smallest_in_subtree = next_biggest
+        second_smallest_in_subtree = second_smallest_in_subtree.left_child while second_smallest_in_subtree.left_child.left_child
+
+        root.value = second_smallest_in_subtree.left_child.value
+        second_smallest_in_subtree.left_child = second_smallest_in_subtree.left_child.right_child
+      end
+    
+    elsif root.left_child && root.left_child.value == value
+      if leaf?(root.left_child)
+        root.left_child = nil
+      elsif one_child?(root.left_child)
+        root.left_child = (root.left_child.left_child || root.left_child.right_child)
+      else
+        next_biggest = root.left_child.right_child
+        second_smallest_in_subtree = next_biggest
+        second_smallest_in_subtree = second_smallest_in_subtree.left_child while second_smallest_in_subtree.left_child.left_child
+
+        root.left_child.value = second_smallest_in_subtree.left_child.value
+        second_smallest_in_subtree.left_child = second_smallest_in_subtree.left_child.right_child
+      end
+
+    elsif root.right_child && root.right_child.value == value
+      if leaf?(root.right_child)
+        root.right_child = nil if leaf?(root.right_child)
+      elsif one_child?(root.right_child)
+        root.right_child = (root.right_child.left_child || root.right_child.rigth_child)
+      else
+        next_biggest = root.right_child.right_child
+        second_smallest_in_subtree = next_biggest
+        second_smallest_in_subtree = second_smallest_in_subtree.left_child while second_smallest_in_subtree.left_child.left_child
+        root.right_child.value = second_smallest_in_subtree.left_child.value
+        second_smallest_in_subtree.left_child = second_smallest_in_subtree.left_child.right_child
+      end
+
     else
-      puts "Can't insert duplicate values"
+      if value < root.value
+        delete value, root.left_child
+      else
+        delete value, root.right_child
+      end
     end
   end
 
