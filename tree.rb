@@ -37,14 +37,6 @@ class Tree
     # duplicate values are not allowed
   end
 
-  def leaf?(node)
-    node.left_child.nil? && node.right_child.nil?
-  end
-
-  def one_child?(node)
-    node.left_child.nil? && node.right_child || node.left_child && node.right_child.nil?
-  end
-
   def delete(value, root = @root)
     if root.value == value
       if one_child?(root)
@@ -94,20 +86,54 @@ class Tree
     end
   end
 
-  def find(value, node = root)
-    return if node.nil?
-    return node if node.value == value
+  def find(value, root = @root)
+    return if root.nil?
+    return root if root.value == value
 
-    if value < node.value
-      find value, node.left_child
+    if value < root.value
+      find value, root.left_child
     else
-      find value, node.right_child
+      find value, root.right_child
     end
+  end
+
+  def level_order_rec(current_node = @root, queue = [], array = [])
+    return array if current_node.nil?
+
+    array << current_node
+    queue << current_node.left_child if current_node.left_child
+    queue << current_node.right_child if current_node.right_child
+
+    level_order_rec queue.shift, queue, array
+  end
+
+  def level_order_iterative
+    array = []
+    queue = [@root]
+
+    until queue.empty?
+      current_node = queue.shift
+      array << current_node
+      queue << current_node.left_child if current_node.left_child
+      queue << current_node.right_child if current_node.right_child
+    end
+
+    array
   end
 
   def pretty_print(node = root, prefix = '', is_left = true)
     pretty_print(node.right_child, "#{prefix}#{is_left ? '│ ' : ' '}", false) if node.right_child
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
     pretty_print(node.left_child, "#{prefix}#{is_left ? ' ' : '│ '}", true) if node.left_child
+  end
+
+  private
+
+  def leaf?(node)
+    node.left_child.nil? && node.right_child.nil?
+  end
+
+  def one_child?(node)
+    node.left_child.nil? && node.right_child || node.left_child && node.right_child.nil?
   end
 end
