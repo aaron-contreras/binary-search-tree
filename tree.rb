@@ -121,6 +121,30 @@ class Tree
     array
   end
 
+  def inorder(root = @root, array = [])
+    return array if root.nil?
+
+    array << root.value
+    inorder(root.left_child, array)
+    inorder(root.right_child, array)
+  end
+
+  def preorder(root = @root, array = [])
+    return array if root.nil?
+
+    preorder(root.left_child, array)
+    array << root.value
+    preorder(root.right_child, array)
+  end
+
+  def postorder(root = @root, array = [])
+    return array if root.nil?
+
+    postorder(root.left_child, array)
+    postorder(root.right_child, array)
+    array << root.value
+  end
+
   def pretty_print(node = root, prefix = '', is_left = true)
     pretty_print(node.right_child, "#{prefix}#{is_left ? '│ ' : ' '}", false) if node.right_child
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
