@@ -145,6 +145,30 @@ class Tree
     array << root.value
   end
 
+  def height(value)
+    calculate_height find(value)
+  end
+
+  def calculate_height(node)
+    return -1 if node.nil?
+
+    1 + [calculate_height(node.left_child), calculate_height(node.right_child)].max
+  end
+
+  def depth(value)
+    calculate_depth find(value)
+  end
+
+  def calculate_depth(target, current_node = @root, count = 0)
+    return count if target == current_node
+
+    if target.value < current_node.value
+      calculate_depth(target, current_node.left_child, count + 1)
+    else
+      calculate_depth(target, current_node.rigth_child, count + 1)
+    end
+  end
+
   def pretty_print(node = root, prefix = '', is_left = true)
     pretty_print(node.right_child, "#{prefix}#{is_left ? '│ ' : ' '}", false) if node.right_child
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
