@@ -7,6 +7,7 @@ class Tree
   include MergeSort
 
   attr_reader :root
+
   def initialize(array)
     @root = build_tree(sort(array).uniq)
   end
@@ -100,7 +101,7 @@ class Tree
   def level_order_rec(current_node = @root, queue = [], array = [])
     return array if current_node.nil?
 
-    array << current_node
+    array << current_node.value
     queue << current_node.left_child if current_node.left_child
     queue << current_node.right_child if current_node.right_child
 
@@ -113,7 +114,7 @@ class Tree
 
     until queue.empty?
       current_node = queue.shift
-      array << current_node
+      array << current_node.value
       queue << current_node.left_child if current_node.left_child
       queue << current_node.right_child if current_node.right_child
     end
@@ -146,27 +147,21 @@ class Tree
   end
 
   def height(value)
-    calculate_height find(value)
-  end
-
-  def calculate_height(node)
-    return -1 if node.nil?
-
-    1 + [calculate_height(node.left_child), calculate_height(node.right_child)].max
+    value = find(value) unless value.instance_of? Node
+    calculate_height value
   end
 
   def depth(value)
-    calculate_depth find(value)
+    value = find(value) unless value.instance_of? Node
+    calculate_depth value
   end
 
-  def calculate_depth(target, current_node = @root, count = 0)
-    return count if target == current_node
+  def balanced?
+    difference_of_subtree_heights(root).between?(-1, 1)
+  end
 
-    if target.value < current_node.value
-      calculate_depth(target, current_node.left_child, count + 1)
-    else
-      calculate_depth(target, current_node.rigth_child, count + 1)
-    end
+  def rebalance
+    @root = build_tree sort(level_order_rec).uniq
   end
 
   def pretty_print(node = root, prefix = '', is_left = true)
@@ -183,5 +178,25 @@ class Tree
 
   def one_child?(node)
     node.left_child.nil? && node.right_child || node.left_child && node.right_child.nil?
+  end
+
+  def calculate_depth(target, current_node = @root, count = 0)
+    return count if target == current_node
+
+    if target.value < current_node.value
+      calculate_depth(target, current_node.left_child, count + 1)
+    else
+      calculate_depth(target, current_node.rigth_child, count + 1)
+    end
+  end
+
+  def calculate_height(node)
+    return -1 if node.nil?
+
+    1 + [calculate_height(node.left_child), calculate_height(node.right_child)].max
+  end
+
+  def difference_of_subtree_heights(node)
+    height(node.left_child) - height(node.right_child)
   end
 end
