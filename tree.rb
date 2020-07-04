@@ -170,6 +170,14 @@ class Tree
     pretty_print(node.left_child, "#{prefix}#{is_left ? ' ' : '│ '}", true) if node.left_child
   end
 
+  def print_tree
+    puts root.to_s.center(80)
+    unless leaf?(root)
+      puts "#{'/' if root.left_child}#{' ' * root.to_s.length}#{'\\' if root.right_child}".center(80)
+      puts "#{root.left_child.value if root.left_child}   #{root.right_child.value if root.right_child}".center(80)
+    end
+  end
+
   private
 
   def leaf?(node)
